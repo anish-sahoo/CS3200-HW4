@@ -9,40 +9,53 @@
 -- (25 pts) What is the total length of each playlist in hours? List the playlist id and name of only those playlists that are longer than 2 hours, along with the length in hours rounded to two decimals.
 -- (25 pts) Creative addition: Define a new meaningful query using at least three tables, and some window function. Explain clearly what your query achieves, and what the results mean
 
-SELECT c.FirstName,
+-- (5 pts) What are the last names and emails of all customer who made purchased in the store?
+SELECT 
+  c.FirstName,
   c.LastName
 FROM customers AS c
 WHERE c.CustomerId IN (
-    SELECT CustomerId
-    FROM invoices
-  );
-SELECT alb.Title AS "Album Name",
+  SELECT CustomerId
+  FROM invoices
+);
+
+-- (5 pts) What are the names of each albums and the artist who created it?
+SELECT 
+  alb.Title AS "Album Name",
   a.name AS "Artist Name"
 FROM albums AS alb
   JOIN artists AS a
 WHERE alb.ArtistId = a.ArtistId;
-SELECT State,
+
+-- (10 pts) What are the total number of unique customers for each state, ordered alphabetically by state?
+SELECT 
+  State,
   COUNT(CustomerId)
 FROM customers
+WHERE State IS NOT NULL
 GROUP BY State
 ORDER BY State ASC;
 
 -- (10 pts) Which states have more than 10 unique customers customers?
-SELECT State,
+SELECT 
+  State,
   COUNT(CustomerId)
 FROM customers
+WHERE State IS NOT NULL
 GROUP BY State
 HAVING COUNT(CustomerId) > 10;
 
 -- (10 pts) What are the names of the artists who made an album containing the substring "symphony" in the album title?
-SELECT art.Name,
+SELECT 
+  art.Name,
   alb.Title
 FROM artists as art
   INNER JOIN albums as alb USING(ArtistId)
 WHERE alb.Title LIKE '%symphony%';
 
 -- (15 pts) What are the names of all artists who performed MPEG (video or audio) tracks in either the "Brazilian Music" or the "Grunge" playlists?
-SELECT DISTINCT ar.Name AS "Artist Name"
+SELECT DISTINCT 
+  ar.Name AS "Artist Name"
 FROM artists AS ar
   JOIN albums AS al ON ar.ArtistId = al.ArtistId
   JOIN tracks AS tr ON tr.AlbumId = al.AlbumId
@@ -51,7 +64,8 @@ WHERE pl_tr.PlaylistId IN (11, 16)
   AND tr.MediaTypeId IN (1, 3);
 
 -- (20 pts) How many artists published at least 10 MPEG tracks?
-SELECT DISTINCT ar.Name,
+SELECT DISTINCT 
+  ar.Name,
   COUNT(tr.TrackId) as "Number of Tracks"
 FROM artists AS ar
   JOIN albums AS al ON ar.ArtistId = al.ArtistId
@@ -63,14 +77,17 @@ HAVING COUNT(tr.TrackId) >= 10;
 -- (25 pts) What is the total length of each playlist in hours? List the playlist id and name of only those playlists that are longer than 2 hours, along with the length in hours rounded to two decimals.
 
 -- total length of each playlist
-SELECT pl.Name,
+SELECT 
+  pl.Name,
   ROUND(SUM(tr.Milliseconds) / 3600000.00, 2) AS "Hours"
 FROM playlists AS pl
   JOIN playlist_track AS pl_tr ON pl_tr.PlaylistId = pl.PlaylistId
   JOIN tracks AS tr ON pl_tr.TrackId = tr.TrackId
 GROUP BY pl.Name;
 -- more than 2 hours
-SELECT pl.PlaylistId,
+SELECT 
+  pl.PlaylistId,
+  pl.Name,
   ROUND(SUM(tr.Milliseconds) / 3600000.00, 2) AS "Hours"
 FROM playlists AS pl
   JOIN playlist_track AS pl_tr ON pl_tr.PlaylistId = pl.PlaylistId
