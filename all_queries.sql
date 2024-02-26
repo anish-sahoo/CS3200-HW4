@@ -24,8 +24,7 @@ SELECT
   alb.Title AS "Album Name",
   a.name AS "Artist Name"
 FROM albums AS alb
-  JOIN artists AS a
-WHERE alb.ArtistId = a.ArtistId;
+  JOIN artists AS a ON alb.ArtistId = a.ArtistId;
 
 -- (10 pts) What are the total number of unique customers for each state, ordered alphabetically by state?
 SELECT 
